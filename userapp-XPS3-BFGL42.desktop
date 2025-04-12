@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=XPS3
+Exec=XPS3 %f
+Categories=Other;
+NoDisplay=true
+MimeType=application/x-cd-image
+Terminal=false
