@@ -24,4 +24,4 @@ echo -e "${GREEN_BOLD}BAIXANDO ATUALIZAÇÃO PARA INSTALAÇÃO DE JOGOS DO  Sony
 sleep 5
 # Salvar overlay no Batocera
 batocera-save-overlay > /dev/null 2>&1
-echo -e "${GREEN_BOLD}SISTEMA ATUALIZADO!!!"${RESET}"
+echo -e "${GREEN_BOLD}\"SISTEMA ATUALIZADO!!!\"${RESET}"
