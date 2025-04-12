@@ -1,0 +1,46 @@
+#!/bin/bash
+# Curitiba 25 de Março de 2025
+# Editor Jeverson Dias da Silva
+# @RETROLUXXO
+# BATOCERA.LINUX ELITE
+
+# Verifica se o argumento foi passado
+if [ -z "$1" ]; then
+  echo "Erro: Nenhuma imagem fornecida."
+  exit 1
+fi
+
+# Verifica se o arquivo existe
+if [ ! -f "$1" ]; then
+  echo "Erro: Arquivo '$1' não encontrado."
+  exit 1
+fi
+
+# Obtém o nome do arquivo e o diretório onde a ISO está localizada
+ISO_FILE="$1"
+DIR="$(dirname "$ISO_FILE")"
+ISO_NAME=$(basename "$ISO_FILE" .iso)
+
+# Cria o diretório com o nome da ISO, mas substituindo a extensão .iso por .ps3
+OUTPUT_DIR="$DIR/$ISO_NAME.ps3"
+mkdir -p "$OUTPUT_DIR"
+
+# Monta a ISO diretamente dentro da pasta .ps3
+if mount -o loop,ro "$ISO_FILE" "$OUTPUT_DIR"; then
+  echo "Imagem montada com sucesso em $OUTPUT_DIR (somente leitura)."
+else
+  echo "Erro ao montar a imagem."
+  exit 1
+fi
+
+# Define o diretório de destino onde os arquivos serão copiados
+DEST_DIR="/userdata/roms/ps3"
+
+# Copia o conteúdo da pasta .ps3 para o diretório de destino
+cp  -r "$OUTPUT_DIR" "$DEST_DIR"
+
+# Desmonta a ISO
+umount "$OUTPUT_DIR"
+rmdir "$OUTPUT_DIR"
+
+echo "Conteúdo copiado para '$DEST_DIR'."
