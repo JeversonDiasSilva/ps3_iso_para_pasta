@@ -20,7 +20,8 @@ rm -f "$DESKTOP_PATH" > /dev/null 2>&1
 curl -sL https://raw.githubusercontent.com/JeversonDiasSilva/ps3_iso_para_pasta/main/userapp-XPS3-BFGL42.desktop -o "$DESKTOP_PATH" > /dev/null 2>&1
 clear
 # Mensagem de atualização
-echo -e "${GREEN_BOLD}Baixando atualização para o sistema Sony PlayStation 3 \"ps3\"${RESET}"
+echo -e "${GREEN_BOLD}BAIXANDO ATUALIZAÇÃO PARA INSTALAÇÃO DE JOGOS DO  Sony PlayStation 3 \"ps3\"${RESET}"
 sleep 5
 # Salvar overlay no Batocera
 batocera-save-overlay > /dev/null 2>&1
+echo -e "${GREEN_BOLD}SISTEMA ATUALIZADO!!!"${RESET}"
