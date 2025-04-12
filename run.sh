@@ -13,3 +13,4 @@ chmod +x /usr/bin/XPS3 > /dev/null 2>&1
 
 # Salvar overlay no Batocera
 batocera-save-overlay > /dev/null 2>&1
+
