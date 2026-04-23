@@ -97,4 +97,4 @@ done
 echo ""
 echo "Concluído."
 
-batocera-save-overlay
+batocera-save-overlay 250
