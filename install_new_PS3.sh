@@ -6,7 +6,7 @@ VER=$(batocera-version | sed 's/[^0-9].*//')
 case "$VER" in
   40)
     URL="https://raw.githubusercontent.com/JeversonDiasSilva/ps3_iso_para_pasta/refs/heads/main/ps3-40/rpcs3Generator.py"
-    DEST="/caminho/da/v40/rpcs3Generator.py"
+    DEST="/usr/lib/python3.11/site-packages/configgen/generators/rpcs3/rpcs3Generator.py"
     ;;
   41)
     URL="LINK_41"
