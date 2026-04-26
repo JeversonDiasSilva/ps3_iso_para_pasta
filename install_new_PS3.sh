@@ -105,6 +105,14 @@ wget -q -O /tmp/dev_flash_firmware.tar.gz \
 tar -xzf /tmp/dev_flash_firmware.tar.gz -C /userdata/system/configs/rpcs3/ >/dev/null 2>&1
 rm -f /tmp/dev_flash_firmware.tar.gz >/dev/null 2>&1
 
+mkdir -p /userdata/bios/PS3/UPDATE/
+
+# baixa o arquivo na pasta /userdata/bios
+wget -q -O /userdata/bios/PS3UPDAT.PUP https://github.com/JeversonDiasSilva/ps3_iso_para_pasta/releases/download/1.0/PS3UPDAT.PUP
+
+# cria link simbólico dentro da pasta UPDATE
+ln -sf /userdata/bios/PS3UPDAT.PUP /userdata/bios/PS3/UPDATE/PS3UPDAT.PUP
+
 # Baixar generator
 wget -q -O "$DEST" "$URL_GEN"
 
