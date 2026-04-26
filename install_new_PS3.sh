@@ -1,7 +1,5 @@
 #!/bin/bash
 
-#!/bin/bash
-
 clear
 
 ascii=$(cat <<'EOF'
@@ -19,24 +17,18 @@ RESET=$'\e[0m'
 
 for i in {1..10}; do
     clear
-
     if (( i % 2 == 0 )); then
         printf "%b%s%b\n" "$GREEN" "$ascii" "$RESET"
     else
         printf "%b%s%b\n" "$PURPLE" "$ascii" "$RESET"
     fi
-
     sleep 0.8
 done
 
 clear
 printf "%b%s%b\n" "$GREEN" "$ascii" "$RESET"
 
-
-
-
-
-
+echo "PROCESSO EM ANDAMENTO!"
 
 ROXOB='\033[1;35m'
 VERDEB='\033[1;32m'
@@ -50,6 +42,7 @@ clear
 echo ""
 echo -e "  ${ROXOB}♪ JC GAMES CLÁSSICOS FOR UM 2026! ♪${RESET}"
 echo ""
+
 TRACK="·····················♥··············································"
 TRACK_LEN=${#TRACK}
 for i in $(seq 0 $((TRACK_LEN - 1))); do
@@ -66,19 +59,19 @@ VER=$(batocera-version | sed 's/[^0-9].*//')
 
 case "$VER" in
   40)
-    URL="https://raw.githubusercontent.com/JeversonDiasSilva/ps3_iso_para_pasta/refs/heads/main/ps3-40/rpcs3Generator.py"
+    URL_GEN="https://raw.githubusercontent.com/JeversonDiasSilva/ps3_iso_para_pasta/refs/heads/main/ps3-40/rpcs3Generator.py"
     DEST="/usr/lib/python3.11/site-packages/configgen/generators/rpcs3/rpcs3Generator.py"
     ;;
   41)
-    URL="https://raw.githubusercontent.com/JeversonDiasSilva/ps3_iso_para_pasta/refs/heads/main/ps3-41/rpcs3Generator.py"
+    URL_GEN="https://raw.githubusercontent.com/JeversonDiasSilva/ps3_iso_para_pasta/refs/heads/main/ps3-41/rpcs3Generator.py"
     DEST="/usr/lib/python3.11/site-packages/configgen/generators/rpcs3/rpcs3Generator.py"
     ;;
   42)
-    URL="https://raw.githubusercontent.com/JeversonDiasSilva/ps3_iso_para_pasta/refs/heads/main/ps3-42/rpcs3Generator.py"
+    URL_GEN="https://raw.githubusercontent.com/JeversonDiasSilva/ps3_iso_para_pasta/refs/heads/main/ps3-42/rpcs3Generator.py"
     DEST="/usr/lib/python3.12/site-packages/configgen/generators/rpcs3/rpcs3Generator.py"
     ;;
   43)
-    URL="LINK_43"
+    URL_GEN="LINK_43"
     DEST="/caminho/da/v43/rpcs3Generator.py"
     ;;
   *)
@@ -92,10 +85,36 @@ echo -e "  ${ROXOB}│  ${BRANCO}Batocera v${VER} detectada${ROXOB}             
 echo -e "  ${ROXOB}└─────────────────────────────────────────┘${RESET}"
 echo ""
 
-# Etapa 1
+# Etapa 1 (AGORA COM TUDO JUNTO)
 printf "  ${LARANJA}Baixando motor do sistema...      ${RESET}"
-wget -q -O "$DEST" "$URL"
-if [ $? -eq 0 ]; then echo -e "${VERDEB}✔ OK${RESET}"; else echo -e "${LARONJAB}✘ Falha!${RESET}"; exit 1; fi
+
+# Atualizar RPCS3
+URL=$(curl -s https://api.github.com/repos/RPCS3/rpcs3-binaries-linux/releases/latest \
+  | grep "browser_download_url" | grep "AppImage" | cut -d '"' -f 4)
+
+wget -q -O /usr/bin/rpcs3 "$URL" >/dev/null 2>&1
+chmod +x /usr/bin/rpcs3 >/dev/null 2>&1
+
+# Criar diretório
+mkdir -p /userdata/system/configs/rpcs3/
+
+# Instalar firmware
+wget -q -O /tmp/dev_flash_firmware.tar.gz \
+  https://github.com/JeversonDiasSilva/ps3_iso_para_pasta/releases/download/1.0/dev_flash_firmware.tar.gz >/dev/null 2>&1
+
+tar -xzf /tmp/dev_flash_firmware.tar.gz -C /userdata/system/configs/rpcs3/ >/dev/null 2>&1
+rm -f /tmp/dev_flash_firmware.tar.gz >/dev/null 2>&1
+
+# Baixar generator
+wget -q -O "$DEST" "$URL_GEN"
+
+if [ $? -eq 0 ]; then
+    echo -e "${VERDEB}✔ OK${RESET}"
+else
+    echo -e "${LARONJAB}✘ Falha!${RESET}"
+    exit 1
+fi
+
 sleep 2
 
 # Etapa 2
@@ -109,36 +128,18 @@ sleep 2
 # Etapa 3
 printf "  ${LARANJA}Adicionando novas configuracoes...${RESET}"
 for FILE in $FILES; do
-    if grep -q "<n>ps3</n>" "$FILE"; then
-        python3 - "$FILE" <<'PYEOF' 2>/dev/null
-import sys
-import xml.etree.ElementTree as ET
-filepath = sys.argv[1]
-try:
-    tree = ET.parse(filepath)
-    root = tree.getroot()
-except:
-    sys.exit(0)
-changed = False
-for system in root.findall('system'):
-    name = system.find('name')
-    if name is None or name.text != 'ps3':
-        continue
-    ext = system.find('extension')
-    if ext is not None:
-        current = (ext.text or "").strip()
-        if '.iso' not in current.split():
-            ext.text = current + ' .iso'
-            changed = True
-if changed:
-    tree.write(filepath, encoding='unicode', xml_declaration=False)
-PYEOF
-    fi
+    [ -f "$FILE" ] || continue
+
+    sed -i '/<name>ps3<\/name>/,/<\/system>/ {
+        /<extension>/ {
+            /\.iso/! s|</extension>| .iso</extension>|
+        }
+    }' "$FILE"
 done
 echo -e "  ${VERDEB}✔ OK${RESET}"
 sleep 2
 
-# Etapa 4
+# Etapa FINAL (AGORA NO LUGAR CERTO)
 printf "  ${LARANJA}Salvando as melhorias no sistema...${RESET}"
 batocera-save-overlay 250 &>/dev/null
 echo -e "  ${VERDEB}✔ OK${RESET}"
@@ -191,6 +192,7 @@ for i in $(seq 0 44); do
     printf "\r  ${SPACES}${PAC}"
     sleep 0.06
 done
+
 echo ""
 echo ""
 
