@@ -40,7 +40,7 @@ RESET='\033[0m'
 clear
 
 echo ""
-echo -e "  ${ROXOB}♪ JC GAMES CLÁSSICOS FOR UM 2026! ♪${RESET}"
+echo -e "  ${ROXOB}♪ JC GAMES CLÁSSICOS FOR UP 2026! ♪${RESET}"
 echo ""
 
 TRACK="·····················♥··············································"
